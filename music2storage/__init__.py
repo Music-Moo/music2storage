@@ -60,7 +60,7 @@ class Music2Storage:
         :param int workers_per_task: Number of workers to create for each task in the pipeline
         """
 
-        if not workers:
+        if not self.workers:
             for _ in range(workers_per_task):
                 self.workers.append(Worker(self._download, self.queues['download'], self.queues['convert'], self.stopper))
                 self.workers.append(Worker(self._convert, self.queues['convert'], self.queues['upload'], self.stopper))

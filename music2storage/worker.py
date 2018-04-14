@@ -37,7 +37,7 @@ class Worker(Thread):
                 continue
 
             try:
-                result = self.func(item, service=None)
+                result = self.func(item)
             except TypeError:
                 continue
             else:
