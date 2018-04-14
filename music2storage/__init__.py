@@ -38,7 +38,7 @@ class Music2Storage:
         :param str url: URL to the music service track
         """
 
-        if self.drive_service not None:
+        if self.drive_service is not None:
             self.queues['download'].put(url)
         else:
             print('Drive service is not initialized. URL was not added to queue.')
