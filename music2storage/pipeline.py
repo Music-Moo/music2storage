@@ -35,7 +35,7 @@ def download_from_youtube(url):
 
 def convert_to_mp3(file_name, delete_queue):
     """
-    Converts the file associated with the file_name passed into an MP3 file.
+    Converts the file associated with the file_name passed into a MP3 file.
 
     :param str file_name: Filename of the original file in local storage
     :param Queue delete_queue: Delete queue to add the original file to after conversion is done
@@ -100,7 +100,8 @@ def upload_to_drive(drive_service, file_name):
 def delete_local_file(file_name):
     """
     Deletes the file associated with the file_name passed from local storage.
-
+    
+    :param str file_name: Filename of the file to be deleted
     :return str: Filename of the file that was just deleted
     """
 
