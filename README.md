@@ -1,5 +1,6 @@
 # music2storage 
 
+[![Build Status](https://travis-ci.org/Music-Moo/music2storage.svg?branch=master)](https://travis-ci.org/Music-Moo/music2storage)
 [![PyPi Badge](https://img.shields.io/pypi/v/music2storage.svg)](https://pypi.python.org/pypi/music2storage)
 [![PyPi Badge](https://img.shields.io/pypi/l/music2storage.svg)](https://pypi.python.org/pypi/music2storage)
 [![PyPi Badge](https://img.shields.io/pypi/pyversions/music2storage.svg)](https://pypi.python.org/pypi/music2storage)
