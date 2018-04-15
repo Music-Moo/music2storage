@@ -4,8 +4,10 @@ python: "3.6"
 
 install:
   - python setup.py install
-  - pip install coverage
+  - pip install coverage codacy-coverage
 
-script: nosetests
+script: coverage run --source music2storage setup.py test
 
-after_success: coverage report
+after_success:
+  - coverage xml
+  - python-codacy-coverage -r coverage.xml
