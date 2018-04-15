@@ -7,7 +7,7 @@ def readme():
         return f.read()
 
 setup(name='music2storage',
-      version='0.1.3',
+      version='0.1.4',
       description='Downloads music from a service and stores it in a cloud or local storage.',
       long_description='Currently the only music service is Youtube and the only storage is Google Drive. Soundcloud and Dropbox are planned to be added soon.',
       url='https://github.com/Music-Moo/music2storage',
