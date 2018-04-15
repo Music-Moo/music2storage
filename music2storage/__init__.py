@@ -26,7 +26,6 @@ class Music2Storage:
 
         self.drive_service = None
         self.youtube_service = None
-        
         self.workers = []
         self.stopper = Event()
         self.signal_handler = None

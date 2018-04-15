@@ -90,7 +90,7 @@ def upload_to_drive(drive_service, file_name):
     
     print(f"Upload for {file_name} has started")
     start_time = time()
-    file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+    drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
     end_time = time()
     print(f"Upload for {file_name} has finished in {end_time - start_time} seconds")
 

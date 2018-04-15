@@ -21,4 +21,5 @@ setup(name='music2storage',
           'pytube'
       ],
       include_package_data=True,
+      python_requires=">=3.6",
       zip_safe=False)
