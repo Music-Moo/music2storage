@@ -90,3 +90,8 @@ class TestMusic2Storage(TestCase):
         result = m2s._delete('filename.mp3')
         mocked_delete_local_file.assert_called_with('filename.mp3')
         self.assertEqual(result, 'filename.mp3')
+
+    def test_notify_sucess(self):
+        m2s = Music2Storage()
+        m2s._notify()
+        # TODO
