@@ -4,7 +4,7 @@ from queue import Queue
 import signal
 from threading import Event
 
-from music2storage.connection import connect_to_drive, connect_to_youtube
+from music2storage.connection import ConnectionHandler
 from music2storage.pipeline import download_from_youtube, convert_to_mp3, upload_to_drive, delete_local_file
 from music2storage.signalhandler import SignalHandler
 from music2storage.worker import Worker
@@ -24,8 +24,7 @@ class Music2Storage:
             'done': Queue(),
         }
 
-        self.drive_service = None
-        self.youtube_service = None
+        self.connection_handler = ConnectionHandler()
         self.workers = []
         self.stopper = Event()
         self.signal_handler = None
@@ -37,20 +36,20 @@ class Music2Storage:
         :param str url: URL to the music service track
         """
 
-        if self.drive_service is not None:
+        if self.connection_handler.storage_service is not None:
             self.queues['download'].put(url)
         else:
             print('Drive service is not initialized. URL was not added to queue.')
 
-    def connect_drive(self):
-        """Opens browser to allow access to the Google Drive service, creates a credentials file, and returns the service instance."""
+    def connect_music_service(self, service_name):
+        """Opens browser to allow access to the music service and creates a credentials file."""
 
-        self.drive_service = connect_to_drive()
+        self.connection_handler.connect_music_service(service_name)
 
-    def connect_youtube(self):
-        """Opens browser to allow access to the Youtube service, creates a credentials file, and returns the service instance."""
+    def connect_storage_service(self, service_name):
+        """Opens browser to allow access to the storage service and creates a credentials file."""
 
-        self.youtube_service = connect_to_youtube()
+        self.connection_handler.connect_storage_service(service_name)
 
     def start_workers(self, workers_per_task):
         """
@@ -100,7 +99,7 @@ class Music2Storage:
         :return str: Original filename passed as an argument
         """
 
-        return upload_to_drive(self.drive_service, file_name)
+        return upload_to_drive(self.connection_handler.storage_service, file_name)
 
     def _delete(self, file_name):
         """

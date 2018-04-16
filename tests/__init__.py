@@ -8,33 +8,33 @@ from music2storage import Music2Storage
 
 
 class TestMusic2Storage(TestCase):
-    def test_add_to_queue_with_drive_service(self):
+    @patch('music2storage.ConnectionHandler')
+    def test_add_to_queue_with_drive_service(self, mocked_handler):
         m2s = Music2Storage()
-        m2s.drive_service = MagicMock()
         m2s.add_to_queue('http://example.com/')
         self.assertEqual(m2s.queues['download'].qsize(), 1)
         self.assertEqual(m2s.queues['download'].get_nowait(), 'http://example.com/')
 
-    def test_add_to_queue_without_drive_service(self):
+    @patch('music2storage.ConnectionHandler')
+    def test_add_to_queue_without_drive_service(self, mocked_handler):
+        mocked_handler.return_value.storage_service = None
         m2s = Music2Storage()
         m2s.add_to_queue('http://example.com/')
         self.assertEqual(m2s.queues['download'].qsize(), 0)
         with self.assertRaises(queue.Empty):
             m2s.queues['download'].get_nowait()
 
-    @patch('music2storage.connect_to_drive', return_value=MagicMock())
-    def test_connect_drive_success(self, mocked_connect_to_drive):
+    @patch('music2storage.ConnectionHandler')
+    def test_connect_music_service_success(self, mocked_handler):
         m2s = Music2Storage()
-        m2s.connect_drive()
-        self.assertTrue(mocked_connect_to_drive.called)
-        self.assertEqual(m2s.drive_service, mocked_connect_to_drive.return_value)
+        m2s.connect_music_service('youtube')
+        mocked_handler.return_value.connect_music_service.assert_called_with('youtube')
 
-    @patch('music2storage.connect_to_youtube', return_value=MagicMock())
-    def test_connect_youtube_success(self, mocked_connect_to_youtube):
+    @patch('music2storage.ConnectionHandler')
+    def test_connect_storage_service_success(self, mocked_handler):
         m2s = Music2Storage()
-        m2s.connect_youtube()
-        self.assertTrue(mocked_connect_to_youtube.called)
-        self.assertEqual(m2s.youtube_service, mocked_connect_to_youtube.return_value)
+        m2s.connect_storage_service('google drive')
+        mocked_handler.return_value.connect_storage_service.assert_called_with('google drive')
 
     @patch('music2storage.Worker')
     @patch('music2storage.SignalHandler')
@@ -81,7 +81,7 @@ class TestMusic2Storage(TestCase):
         m2s = Music2Storage()
         m2s.drive_service = MagicMock()
         result = m2s._upload('filename.mp3')
-        mocked_upload_to_drive.assert_called_with(m2s.drive_service, 'filename.mp3')
+        mocked_upload_to_drive.assert_called_with(m2s.connection_handler.storage_service, 'filename.mp3')
         self.assertEqual(result, 'filename.mp3')
 
     @patch('music2storage.delete_local_file', return_value='filename.mp3')
