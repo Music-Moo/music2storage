@@ -29,7 +29,7 @@ class Worker(Thread):
 
         When there's an item in in_queue, it takes it out, passes it to func as an argument, and puts the result in out_queue.
         """
-
+        
         while not self.stopper.is_set():
             try:
                 item = self.in_queue.get(timeout=5)
