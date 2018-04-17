@@ -93,7 +93,7 @@ class Music2Storage:
 
     def _upload(self, file_name):
         """
-        Uploads the file associated with the file_name passed to the drive service.
+        Uploads the file associated with the file_name passed to the storage service.
 
         :param str file_name: Filename of the file to be uploaded
         :return str: Original filename passed as an argument

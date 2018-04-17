@@ -3,6 +3,7 @@
 from apiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
+from os
 
 
 class ConnectionHandler:
@@ -39,6 +40,8 @@ class ConnectionHandler:
             self.storage_service = self._connect_to_drive()
         elif service_name == 'dropbox':
             print('Dropbox is not supported yet.')
+        elif service_name == 'local':
+            self.storage_service = self._connect_to_local_storage()
         else:
             print('Storage service name is not recognized.')
 
@@ -58,6 +61,19 @@ class ConnectionHandler:
             creds = tools.run_flow(flow, store)
         service = build('drive', 'v3', http=creds.authorize(Http()))
         return service
+
+    @staticmethod
+    def _connect_to_local_storage():
+        """
+        Gets the path to the user home folder's Music folder, and creates it if it doesn't exist.
+
+        :return str: Path to user's Music folder
+        """
+
+        music_folder = os.path.join(os.path.expanduser('~'), 'Music')
+        if not os.path.exists(music_folder):
+            os.makedirs(music_folder)
+        return music_folder
 
     @staticmethod
     def _connect_to_youtube():

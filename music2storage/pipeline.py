@@ -97,6 +97,17 @@ def upload_to_drive(drive_service, file_name):
     return file_name
 
 
+def move_to_local_storage(music_folder, file_name):
+    """
+    Moves the file associated with the file_name passed to the Music folder in the local storage.
+
+    :param str music_folder: Path to the Music folder located in the user's home folder
+    :param str file_name: Filename of the file to be moved
+    """
+
+    os.rename(file_name, os.path.join(music_folder, file_name))
+
+
 def delete_local_file(file_name):
     """
     Deletes the file associated with the file_name passed from local storage.
