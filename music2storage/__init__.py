@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
+log = logging.getLogger(__name__)
+
 from queue import Queue
 import signal
 from threading import Event
@@ -37,9 +41,9 @@ class Music2Storage:
         """
 
         if self.connection_handler.current_music is None:
-            print('Music service is not initialized. URL was not added to queue.')
+            log.error('Music service is not initialized. URL was not added to queue.')
         elif self.connection_handler.current_storage is None:
-            print('Drive service is not initialized. URL was not added to queue.')
+            log.error('Drive service is not initialized. URL was not added to queue.')
         else:
             self.queues['download'].put(url)
 

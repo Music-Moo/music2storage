@@ -2,6 +2,8 @@
 
 import sys
 
+from music2storage import log
+
 
 class SignalHandler:
     """Handles signals and stops the worker threads."""
@@ -25,7 +27,7 @@ class SignalHandler:
         :param Frame frame: Current stack frame
         """
 
-        print('\nGracefully killing the threads...')
+        log.info('Gracefully killing the threads...')
         self.stopper.set()
 
         for worker in self.workers:

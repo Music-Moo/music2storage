@@ -17,6 +17,8 @@ from requests.exceptions import HTTPError
 import soundcloud
 from tqdm import tqdm
 
+from music2storage import log
+
 
 class MusicService(ABC):
     """Template for every music service."""
@@ -55,14 +57,14 @@ class Youtube(MusicService):
         try:
             yt = YouTube(url)
         except RegexMatchError:
-            print(f"Cannot download file at {url}")
+            log.error(f"Cannot download file at {url}")
         else:
             stream = yt.streams.first()
-            print(f"Download for {stream.default_filename} has started")
+            log.info(f"Download for {stream.default_filename} has started")
             start_time = time()
             stream.download()
             end_time = time()
-            print(f"Download for {stream.default_filename} has finished in {end_time - start_time} seconds")
+            log.info(f"Download for {stream.default_filename} has finished in {end_time - start_time} seconds")
             return stream.default_filename
 
 
@@ -87,7 +89,7 @@ class Soundcloud(MusicService):
         try:
             track = self.client.get('/resolve', url=url)
         except HTTPError:
-            print(f"{url} is not a Soundcloud URL.")
+            log.error(f"{url} is not a Soundcloud URL.")
             return
         r = requests.get(self.client.get(track.stream_url, allow_redirects=False).location, stream=True)
         total_size = int(r.headers['content-length'])
@@ -116,7 +118,7 @@ class GoogleDrive(StorageService):
             try:
                 flow = client.flow_from_clientsecrets('client_secret.json', SCOPES)
             except InvalidClientSecretsError:
-                print('ERROR: Could not find client_secret.json in current directory, please obtain it from the API console.')
+                log.error('ERROR: Could not find client_secret.json in current directory, please obtain it from the API console.')
                 return
             creds = tools.run_flow(flow, store)
         self.connection = build('drive', 'v3', http=creds.authorize(Http()))
@@ -125,7 +127,7 @@ class GoogleDrive(StorageService):
         try:
             folder_id = response.get('files', [])[0]['id']
         except IndexError:
-            print('Music folder is missing. Creating it.')
+            log.warning('Music folder is missing. Creating it.')
             folder_metadata = {'name': 'Music', 'mimeType': 'application/vnd.google-apps.folder'}
             folder = self.connection.files().create(body=folder_metadata, fields='id').execute()
 
@@ -142,11 +144,11 @@ class GoogleDrive(StorageService):
         file_metadata = {'name': file_name, 'parents': [folder_id]}
         media = MediaFileUpload(file_name, mimetype='audio/mpeg')
         
-        print(f"Upload for {file_name} has started")
+        log.info(f"Upload for {file_name} has started")
         start_time = time()
         self.connection.files().create(body=file_metadata, media_body=media, fields='id').execute()
         end_time = time()
-        print(f"Upload for {file_name} has finished in {end_time - start_time} seconds")
+        log.info(f"Upload for {file_name} has finished in {end_time - start_time} seconds")
 
         return file_name
 
@@ -159,7 +161,7 @@ class LocalStorage(StorageService):
         if os.path.exists(custom_path):
             self.music_folder = custom_path
         else:
-            print(f"Custom path '{custom_path}' doesn't exist. Using default path.")
+            log.warning(f"Custom path '{custom_path}' doesn't exist. Using default path.")
             self.music_folder = None
 
     def connect(self):
@@ -178,8 +180,8 @@ class LocalStorage(StorageService):
         :param str file_name: Filename of the file to be uploaded
         """
         
-        print(f"Upload for {file_name} has started")
+        log.info(f"Upload for {file_name} has started")
         start_time = time()
         os.rename(file_name, os.path.join(self.music_folder, file_name))
         end_time = time()
-        print(f"Upload for {file_name} has finished in {end_time - start_time} seconds")
+        log.info(f"Upload for {file_name} has finished in {end_time - start_time} seconds")

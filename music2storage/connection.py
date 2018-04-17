@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from music2storage import log
 from music2storage.service import Youtube, Soundcloud, GoogleDrive, LocalStorage
 
 
@@ -30,7 +31,7 @@ class ConnectionHandler:
                 self.music_services['soundcloud'] = Soundcloud(api_key=api_key)
                 self.current_music = self.music_services['soundcloud']
             else:
-                print('Music service name is not recognized.')
+                log.error('Music service name is not recognized.')
 
     def use_storage_service(self, service_name, custom_path):
         """
@@ -39,7 +40,7 @@ class ConnectionHandler:
         :param str service_name: Name of the storage service
         :param str custom_path: Custom path where to download tracks for local storage (optional, and must already exist, use absolute paths only)
         """
-        
+
         try:
             self.current_storage = self.storage_services[service_name]
         except KeyError:
@@ -48,10 +49,10 @@ class ConnectionHandler:
                 self.current_storage = self.storage_services['google drive']
                 self.current_storage.connect()
             elif service_name == 'dropbox':
-                print('Dropbox is not supported yet.')
+                log.error('Dropbox is not supported yet.')
             elif service_name == 'local':
                 self.storage_services['local'] = LocalStorage(custom_path=custom_path)
                 self.current_storage = self.storage_services['local']
                 self.current_storage.connect()
             else:
-                print('Storage service name is not recognized.')
+                log.error('Storage service name is not recognized.')

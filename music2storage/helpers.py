@@ -6,6 +6,8 @@ from time import time
 
 from ffmpy import FFmpeg, FFRuntimeError
 
+from music2storage import log
+
 
 def convert_to_mp3(file_name, delete_queue):
     """
@@ -20,7 +22,7 @@ def convert_to_mp3(file_name, delete_queue):
     file = os.path.splitext(file_name)
 
     if file[1] == '.mp3':
-        print(f"{file_name} is already a MP3 file, no conversion needed.")
+        log.info(f"{file_name} is already a MP3 file, no conversion needed.")
         return file_name
 
     new_file_name = file[0] + '.mp3'
@@ -30,7 +32,7 @@ def convert_to_mp3(file_name, delete_queue):
         outputs={new_file_name: None}
     )
 
-    print(f"Conversion for {file_name} has started")
+    log.info(f"Conversion for {file_name} has started")
     start_time = time()
     try:
         ff.run(stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -38,7 +40,7 @@ def convert_to_mp3(file_name, delete_queue):
         os.remove(new_file_name)
         ff.run(stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     end_time = time()
-    print(f"Conversion for {file_name} has finished in {end_time - start_time} seconds")
+    log.info(f"Conversion for {file_name} has finished in {end_time - start_time} seconds")
 
     delete_queue.put(file_name)
     return new_file_name
@@ -54,7 +56,7 @@ def delete_local_file(file_name):
 
     try:
         os.remove(file_name)
-        print(f"Deletion for {file_name} has finished")
+        log.info(f"Deletion for {file_name} has finished")
         return file_name
     except OSError:
         pass
