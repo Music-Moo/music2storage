@@ -29,6 +29,6 @@ class SignalHandler:
         self.stopper.set()
 
         for worker in self.workers:
-            worker.join()
+            worker.join(1)
 
         sys.exit(0)

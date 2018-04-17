@@ -5,7 +5,7 @@ import signal
 from threading import Event
 
 from music2storage.connection import ConnectionHandler
-from music2storage.pipeline import download_from_youtube, convert_to_mp3, upload_to_drive, delete_local_file
+from music2storage.helpers import convert_to_mp3, delete_local_file
 from music2storage.signalhandler import SignalHandler
 from music2storage.worker import Worker
 
@@ -36,22 +36,32 @@ class Music2Storage:
         :param str url: URL to the music service track
         """
 
-        if self.connection_handler.storage_service is not None:
-            self.queues['download'].put(url)
-        else:
+        if self.connection_handler.current_music is None:
+            print('Music service is not initialized. URL was not added to queue.')
+        elif self.connection_handler.current_storage is None:
             print('Drive service is not initialized. URL was not added to queue.')
+        else:
+            self.queues['download'].put(url)
 
-    def connect_music_service(self, service_name):
-        """Opens browser to allow access to the music service and creates a credentials file."""
+    def use_music_service(self, service_name):
+        """
+        Sets the current music service to service_name.
+        
+        :param str service_name: Name of the music service
+        """
 
-        self.connection_handler.connect_music_service(service_name)
+        self.connection_handler.use_music_service(service_name)
 
-    def connect_storage_service(self, service_name):
-        """Opens browser to allow access to the storage service and creates a credentials file."""
+    def use_storage_service(self, service_name):
+        """
+        Sets the current storage service to service_name and attempts to connect to it.
+        
+        :param str service_name: Name of the storage service
+        """
 
-        self.connection_handler.connect_storage_service(service_name)
+        self.connection_handler.use_storage_service(service_name)
 
-    def start_workers(self, workers_per_task):
+    def start_workers(self, workers_per_task=1):
         """
         Creates and starts the workers, as well as attaching a handler to terminate them gracefully when a SIGINT signal is received.
 
@@ -79,7 +89,7 @@ class Music2Storage:
         :return str: Filename of the file in local storage
         """
         
-        return download_from_youtube(url)
+        return self.connection_handler.current_music.download(url)
 
     def _convert(self, file_name):
         """
@@ -99,7 +109,7 @@ class Music2Storage:
         :return str: Original filename passed as an argument
         """
 
-        return upload_to_drive(self.connection_handler.storage_service, file_name)
+        return self.connection_handler.current_storage.upload(file_name)
 
     def _delete(self, file_name):
         """

@@ -21,8 +21,9 @@ $ pip install music2storage
 from music2storage import Music2Storage
 
 m2s = Music2Storage()
-m2s.connect_drive()
-m2s.start_workers(1)
+m2s.use_music_service('youtube')
+m2s.use_storage_service('google drive')
+m2s.start_workers()
 
 m2s.add_to_queue('https://www.youtube.com/watch?v=DhHGDOgjie4')
 ```
