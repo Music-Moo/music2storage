@@ -4,7 +4,7 @@ import sys
 
 
 class SignalHandler:
-    """Handles signals and stop the worker threads."""
+    """Handles signals and stops the worker threads."""
 
     def __init__(self, workers, stopper):
         """
