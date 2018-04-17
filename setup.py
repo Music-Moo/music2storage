@@ -28,10 +28,10 @@ setup(name='music2storage',
       zip_safe=False,
       test_suite='nose.collector',
       tests_require=['nose'],
-      classifiers=(
+      classifiers=[
           'Intended Audience :: Developers',
           'Natural Language :: English',
           'Programming Language :: Python',
           'Programming Language :: Python :: 3.6',
           'Programming Language :: Python :: Implementation :: CPython'
-      ))
+      ])
