@@ -43,23 +43,25 @@ class Music2Storage:
         else:
             self.queues['download'].put(url)
 
-    def use_music_service(self, service_name):
+    def use_music_service(self, service_name, api_key=None):
         """
         Sets the current music service to service_name.
         
         :param str service_name: Name of the music service
+        :param str api_key: Optional API key if necessary
         """
 
-        self.connection_handler.use_music_service(service_name)
+        self.connection_handler.use_music_service(service_name, api_key=api_key)
 
-    def use_storage_service(self, service_name):
+    def use_storage_service(self, service_name, custom_path=None):
         """
         Sets the current storage service to service_name and attempts to connect to it.
         
         :param str service_name: Name of the storage service
+        :param str custom_path: Custom path where to download tracks for local storage (optional, and must already exist, use absolute paths only)
         """
 
-        self.connection_handler.use_storage_service(service_name)
+        self.connection_handler.use_storage_service(service_name, custom_path=custom_path)
 
     def start_workers(self, workers_per_task=1):
         """

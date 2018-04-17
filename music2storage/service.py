@@ -154,17 +154,22 @@ class GoogleDrive(StorageService):
 class LocalStorage(StorageService):
     """Local Storage service class."""
 
-    def __init__(self):
+    def __init__(self, custom_path=None):
         self.name = 'local'
-        self.connection = None
+        if os.path.exists(custom_path):
+            self.music_folder = custom_path
+        else:
+            print(f"Custom path '{custom_path}' doesn't exist. Using default path.")
+            self.music_folder = None
 
     def connect(self):
         """Initializes the connection attribute with the path to the user home folder's Music folder, and creates it if it doesn't exist."""
 
-        music_folder = os.path.join(os.path.expanduser('~'), 'Music')
-        if not os.path.exists(music_folder):
-            os.makedirs(music_folder)
-        self.connection = music_folder
+        if self.music_folder is None:
+            music_folder = os.path.join(os.path.expanduser('~'), 'Music')
+            if not os.path.exists(music_folder):
+                os.makedirs(music_folder)
+            self.music_folder = music_folder
 
     def upload(self, file_name):
         """
@@ -172,9 +177,9 @@ class LocalStorage(StorageService):
         
         :param str file_name: Filename of the file to be uploaded
         """
-
+        
         print(f"Upload for {file_name} has started")
         start_time = time()
-        os.rename(file_name, os.path.join(self.connection, file_name))
+        os.rename(file_name, os.path.join(self.music_folder, file_name))
         end_time = time()
         print(f"Upload for {file_name} has finished in {end_time - start_time} seconds")

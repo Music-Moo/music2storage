@@ -12,11 +12,12 @@ class ConnectionHandler:
         self.music_services = {}
         self.storage_services = {}
 
-    def use_music_service(self, service_name, api_key=None):
+    def use_music_service(self, service_name, api_key):
         """
         Sets the current music service to service_name.
 
         :param str service_name: Name of the music service
+        :param str api_key: Optional API key if necessary
         """
 
         try:
@@ -26,17 +27,19 @@ class ConnectionHandler:
                 self.music_services['youtube'] = Youtube()
                 self.current_music = self.music_services['youtube']
             elif service_name == 'soundcloud':
-                self.music_services['soundcloud'] = Soundcloud(api_key=None)
+                self.music_services['soundcloud'] = Soundcloud(api_key=api_key)
                 self.current_music = self.music_services['soundcloud']
             else:
                 print('Music service name is not recognized.')
 
-    def use_storage_service(self, service_name):
+    def use_storage_service(self, service_name, custom_path):
         """
         Sets the current storage service to service_name and runs the connect method on the service.
 
         :param str service_name: Name of the storage service
+        :param str custom_path: Custom path where to download tracks for local storage (optional, and must already exist, use absolute paths only)
         """
+        
         try:
             self.current_storage = self.storage_services[service_name]
         except KeyError:
@@ -47,7 +50,7 @@ class ConnectionHandler:
             elif service_name == 'dropbox':
                 print('Dropbox is not supported yet.')
             elif service_name == 'local':
-                self.storage_services['local'] = LocalStorage()
+                self.storage_services['local'] = LocalStorage(custom_path=custom_path)
                 self.current_storage = self.storage_services['local']
                 self.current_storage.connect()
             else:
