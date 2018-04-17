@@ -18,7 +18,10 @@ setup(name='music2storage',
       install_requires=[
           'ffmpy',
           'google-api-python-client',
-          'pytube'
+          'pytube',
+          'requests',
+          'tqdm',
+          'soundcloud'
       ],
       include_package_data=True,
       python_requires=">=3.6",

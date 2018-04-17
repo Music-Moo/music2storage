@@ -2,6 +2,7 @@
 
 from abc import ABC, abstractmethod
 import os
+import sys
 from time import time
 
 from apiclient.discovery import build
@@ -11,6 +12,10 @@ from oauth2client import file, client, tools
 from oauth2client.clientsecrets import InvalidClientSecretsError
 from pytube import YouTube
 from pytube.exceptions import RegexMatchError
+import requests
+from requests.exceptions import HTTPError
+import soundcloud
+from tqdm import tqdm
 
 
 class MusicService(ABC):
@@ -41,7 +46,7 @@ class Youtube(MusicService):
 
     def download(self, url):
         """
-        Downloads an MP4 or WebM file that is associated with the video at the URL passed.
+        Downloads a MP4 or WebM file that is associated with the video at the URL passed.
 
         :param str url: URL of the video to be downloaded
         :return str: Filename of the file in local storage
@@ -59,6 +64,39 @@ class Youtube(MusicService):
             end_time = time()
             print(f"Download for {stream.default_filename} has finished in {end_time - start_time} seconds")
             return stream.default_filename
+
+
+class Soundcloud(MusicService):
+    """Soundcloud service class."""
+
+    def __init__(self, api_key=None):
+        self.name = 'soundcloud'
+        if api_key is None:
+            self.client_id = '81f430860ad96d8170e3bf1639d4e072'
+        else:
+            self.client_id = api_key
+        self.client = soundcloud.Client(client_id=self.client_id)
+
+    def download(self, url):
+        """
+        Downloads a MP3 file that is associated with the track at the URL passed.
+        
+        :param str url: URL of the track to be downloaded
+        """
+
+        try:
+            track = self.client.get('/resolve', url=url)
+        except HTTPError:
+            print(f"{url} is not a Soundcloud URL.")
+            return
+        r = requests.get(self.client.get(track.stream_url, allow_redirects=False).location, stream=True)
+        total_size = int(r.headers['content-length'])
+        chunk_size = 1000000
+        file_name = track.title + '.mp3'
+        with open(file_name, 'wb') as f:
+            for data in tqdm(r.iter_content(chunk_size), desc=track.title, total=total_size / chunk_size, unit='MB', file=sys.stdout):
+                f.write(data)
+        return file_name
 
 
 class GoogleDrive(StorageService):

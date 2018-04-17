@@ -16,7 +16,14 @@ def convert_to_mp3(file_name, delete_queue):
     :return str: Filename of the new file in local storage
     """
 
-    new_file_name = os.path.splitext(file_name)[0] + '.mp3'
+
+    file = os.path.splitext(file_name)
+
+    if file[1] == '.mp3':
+        print(f"{file_name} is already a MP3 file, no conversion needed.")
+        return file_name
+
+    new_file_name = file[0] + '.mp3'
 
     ff = FFmpeg(
         inputs={file_name: None},

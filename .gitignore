@@ -107,6 +107,8 @@ youtube_credentials.json
 *.mp4
 *.mp3
 *.webm
+*.m4a
+*.tmp
 .DS_Store
 settings.json
 test.py

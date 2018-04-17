@@ -9,7 +9,7 @@
 
 Downloads music from a music service and stores it in a cloud or local storage.
 
-Currently the only music service is Youtube and the only storage is Google Drive. Soundcloud and Dropbox are planned to be added soon.
+Currently the only music services are Youtube and Soundcloud, and the only storages are Google Drive and Local Storage. Dropbox is planned to be added soon.
 
 ## Install
 ```

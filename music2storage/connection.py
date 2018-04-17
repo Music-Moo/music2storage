@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from music2storage.service import Youtube, GoogleDrive, LocalStorage
+from music2storage.service import Youtube, Soundcloud, GoogleDrive, LocalStorage
 
 
 class ConnectionHandler:
@@ -12,7 +12,7 @@ class ConnectionHandler:
         self.music_services = {}
         self.storage_services = {}
 
-    def use_music_service(self, service_name):
+    def use_music_service(self, service_name, api_key=None):
         """
         Sets the current music service to service_name.
 
@@ -26,7 +26,8 @@ class ConnectionHandler:
                 self.music_services['youtube'] = Youtube()
                 self.current_music = self.music_services['youtube']
             elif service_name == 'soundcloud':
-                print('Soundcloud is not supported yet.')
+                self.music_services['soundcloud'] = Soundcloud(api_key=None)
+                self.current_music = self.music_services['soundcloud']
             else:
                 print('Music service name is not recognized.')
 
